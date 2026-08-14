@@ -71,7 +71,7 @@ button { font-family: var(--font-body); }
   z-index: 20;
   height: var(--topbar-height);
   padding: max(10px, env(safe-area-inset-top)) 20px 16px;
-  background: linear-gradient(155deg, var(--primary) 0%, var(--primary-dark) 100%);
+  background: var(--primary);
   border-radius: 0 0 var(--radius-lg) var(--radius-lg);
   display: flex;
   align-items: center;
