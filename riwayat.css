@@ -1,0 +1,136 @@
+/* ===== Riwayat view ===== */
+
+.riwayat-toolbar {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.date-filter-input {
+  flex-shrink: 0;
+  width: 148px;
+  height: 44px;
+  padding: 0 12px;
+  border-radius: var(--radius-md);
+  border: 1.5px solid var(--border);
+  background: var(--surface);
+  font-size: 13px;
+  font-family: var(--font-body);
+  color: var(--text);
+}
+
+.date-filter-input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px var(--primary-tint);
+}
+
+/* ---- KPI row ---- */
+.riwayat-kpi-row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 18px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+  scroll-snap-type: x mandatory;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.riwayat-kpi-row::-webkit-scrollbar { display: none; }
+
+.kpi-card {
+  flex: 0 0 122px;
+  scroll-snap-align: start;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.kpi-label {
+  font-size: 11.5px;
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.kpi-value {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--text);
+  line-height: 1.15;
+}
+
+.kpi-card.kpi-negative {
+  background: var(--error-tint);
+  border-color: var(--error-tint);
+}
+
+.kpi-card.kpi-negative .kpi-value { color: var(--error); }
+
+.kpi-card.kpi-positive {
+  background: var(--success-tint);
+  border-color: var(--success-tint);
+}
+
+.kpi-card.kpi-positive .kpi-value { color: var(--success); }
+
+.riwayat-date-group {
+  margin-bottom: 20px;
+}
+
+.riwayat-date-label {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  margin: 0 0 10px;
+}
+
+.riwayat-entry {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 13px 14px;
+  margin-bottom: 8px;
+}
+
+.riwayat-entry-main {
+  min-width: 0;
+}
+
+.riwayat-entry-name {
+  margin: 0 0 2px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.riwayat-entry-meta {
+  margin: 0;
+  font-size: 12.5px;
+  color: var(--muted);
+}
+
+.riwayat-entry-keterangan {
+  flex-shrink: 0;
+  font-size: 13.5px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.riwayat-entry-keterangan.positive { color: var(--success); }
+.riwayat-entry-keterangan.negative { color: var(--error); }
+.riwayat-entry-keterangan.neutral { color: var(--muted); }

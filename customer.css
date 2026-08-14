@@ -1,0 +1,568 @@
+/* ===== Customer view ===== */
+
+.customer-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.search-box {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 0 14px;
+  height: 44px;
+  color: var(--muted);
+}
+
+.search-box:focus-within {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px var(--primary-tint);
+}
+
+.search-box input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 14px;
+  font-family: var(--font-body);
+  color: var(--text);
+  height: 100%;
+}
+
+.search-box input::placeholder { color: #94a3b8; }
+
+.add-btn {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-md);
+  border: none;
+  background: var(--primary);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.add-btn:hover { background: var(--primary-dark); }
+
+.customer-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.customer-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 13px 14px;
+}
+
+.customer-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: var(--primary-tint);
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 15px;
+  flex-shrink: 0;
+  text-transform: uppercase;
+}
+
+.customer-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.customer-name {
+  margin: 0 0 2px;
+  font-size: 14.5px;
+  font-weight: 600;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.customer-meta {
+  margin: 0;
+  font-size: 12.5px;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.customer-badge {
+  display: inline-block;
+  margin-top: 4px;
+  font-size: 11.5px !important;
+  font-weight: 700 !important;
+}
+
+.customer-call {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ---- Bottom sheet: add customer ---- */
+.sheet-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.45);
+  z-index: 50;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+.sheet-overlay.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.sheet {
+  width: 100%;
+  max-width: 480px;
+  background: var(--surface);
+  border-radius: 24px 24px 0 0;
+  padding: 12px 22px max(22px, env(safe-area-inset-bottom));
+  transform: translateY(100%);
+  transition: transform 0.25s cubic-bezier(0.32, 0.72, 0, 1);
+  max-height: 85vh;
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+}
+
+.sheet.dragging {
+  transition: none;
+}
+
+.sheet-overlay.open .sheet {
+  transform: translateY(0);
+}
+
+.sheet-handle {
+  width: 36px;
+  height: 4px;
+  border-radius: 999px;
+  background: var(--border);
+  margin: 6px auto 14px;
+  touch-action: none;
+}
+
+.sheet-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+  touch-action: none;
+}
+
+.sheet-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.sheet-close {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  border: none;
+  background: var(--bg);
+  color: var(--muted);
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+/* ---- Shared form styles (scoped to this sheet) ---- */
+.sheet .field { margin-bottom: 16px; }
+
+.sheet .field label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 7px;
+}
+
+.sheet .field input {
+  width: 100%;
+  padding: 13px 15px;
+  border-radius: var(--radius-md);
+  border: 1.5px solid var(--border);
+  font-size: 14.5px;
+  font-family: var(--font-body);
+  color: var(--text);
+  background: var(--bg);
+}
+
+.sheet .field input:focus {
+  outline: none;
+  border-color: var(--primary);
+  background: white;
+  box-shadow: 0 0 0 4px var(--primary-tint);
+}
+
+.sheet .btn-submit {
+  width: 100%;
+  padding: 14px 16px;
+  border: none;
+  border-radius: var(--radius-md);
+  background: var(--primary);
+  color: white;
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.sheet .btn-submit:hover { background: var(--primary-dark); }
+.sheet .btn-submit:disabled { opacity: 0.75; cursor: not-allowed; }
+
+.sheet .btn-spinner {
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  border: 2.5px solid rgba(255, 255, 255, 0.4);
+  border-top-color: white;
+  display: none;
+  animation: sheet-spin 0.7s linear infinite;
+}
+
+.sheet .btn-submit.loading .btn-spinner { display: inline-block; }
+
+@keyframes sheet-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ---- Field row (2 columns) ---- */
+.field-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.field-row .field { margin-bottom: 16px; }
+
+/* ---- Location picker button ---- */
+.location-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 13px 15px;
+  border-radius: var(--radius-md);
+  border: 1.5px dashed var(--border);
+  background: var(--bg);
+  color: var(--muted);
+  font-size: 14px;
+  font-weight: 500;
+  font-family: var(--font-body);
+  cursor: pointer;
+  text-align: left;
+}
+
+.location-btn.picked {
+  border-style: solid;
+  border-color: var(--primary);
+  background: var(--primary-tint);
+  color: var(--primary-dark);
+  font-weight: 600;
+}
+
+/* ---- Photo card ---- */
+.photo-card {
+  position: relative;
+  width: 100%;
+  height: 140px;
+  border-radius: var(--radius-md);
+  border: 1.5px dashed var(--border);
+  background: var(--bg);
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.photo-card-empty {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.photo-card-empty[hidden] {
+  display: none;
+}
+
+.photo-card-preview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.photo-card-preview[hidden] {
+  display: none;
+}
+
+.customer-avatar-photo {
+  object-fit: cover;
+}
+
+/* ---- Action sheet (photo source picker) ---- */
+.action-sheet {
+  padding-bottom: max(18px, env(safe-area-inset-bottom));
+}
+
+.action-sheet-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 6px;
+  border: none;
+  background: transparent;
+  border-top: 1px solid var(--border);
+  font-size: 14.5px;
+  font-weight: 500;
+  font-family: var(--font-body);
+  color: var(--text);
+  cursor: pointer;
+  text-align: left;
+}
+
+.action-sheet-item:first-of-type { border-top: none; }
+
+.action-sheet-cancel {
+  justify-content: center;
+  color: var(--error);
+  font-weight: 600;
+  margin-top: 6px;
+}
+
+/* ---- Location map: inline compact card ---- */
+.location-map-card {
+  position: relative;
+  width: 100%;
+  height: 140px;
+  border-radius: var(--radius-md);
+  border: 1.5px solid var(--border);
+  overflow: hidden;
+  margin-top: 10px;
+  background: var(--bg);
+}
+
+#locationMap {
+  position: absolute;
+  inset: 0;
+}
+
+.map-center-pin {
+  display: none;
+}
+
+.location-marker-icon {
+  background: transparent !important;
+  border: none !important;
+}
+
+/* ---- Selection bar (bulk delete) ---- */
+.selection-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 0 8px 0 14px;
+  height: 44px;
+}
+
+.selection-bar[hidden] {
+  display: none;
+}
+
+.selection-cancel {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  border: none;
+  background: var(--bg);
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.selection-count {
+  flex: 1;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.selection-delete {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 36px;
+  padding: 0 14px;
+  border: none;
+  border-radius: 10px;
+  background: var(--error);
+  color: white;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: var(--font-body);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+/* ---- Checkbox indicator on customer-card (selection mode) ---- */
+.customer-check {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1.5px solid var(--border);
+  background: var(--surface);
+  flex-shrink: 0;
+}
+
+.customer-check svg { display: none; }
+
+#customerList.selecting .customer-check { display: flex; }
+#customerList.selecting .customer-call { display: none; }
+
+.customer-card.selected {
+  border-color: var(--primary);
+  background: var(--primary-tint);
+}
+
+.customer-card.selected .customer-check {
+  background: var(--primary);
+  border-color: var(--primary);
+}
+
+.customer-card.selected .customer-check svg { display: block; }
+
+/* ---- Delete confirmation dialog ---- */
+.confirm-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.45);
+  z-index: 70;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.18s ease;
+}
+
+.confirm-overlay.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.confirm-dialog {
+  width: 100%;
+  max-width: 320px;
+  background: var(--surface);
+  border-radius: 20px;
+  padding: 22px;
+  transform: scale(0.94);
+  transition: transform 0.18s ease;
+}
+
+.confirm-overlay.open .confirm-dialog {
+  transform: scale(1);
+}
+
+.confirm-title {
+  margin: 0 0 8px;
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.confirm-desc {
+  margin: 0 0 20px;
+  font-size: 13.5px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.confirm-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.confirm-btn {
+  flex: 1;
+  height: 42px;
+  border-radius: 12px;
+  border: none;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: var(--font-body);
+  cursor: pointer;
+}
+
+.confirm-cancel {
+  background: var(--bg);
+  color: var(--text);
+  border: 1.5px solid var(--border);
+}
+
+.confirm-danger {
+  background: var(--error);
+  color: white;
+}

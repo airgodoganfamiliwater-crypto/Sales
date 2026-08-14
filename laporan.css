@@ -1,0 +1,152 @@
+/* ===== Laporan view ===== */
+
+.laporan-filter-panel {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.laporan-filter-panel[hidden] {
+  display: none;
+}
+
+.laporan-filter-field {
+  flex: 1;
+  min-width: 0;
+}
+
+.laporan-filter-field label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+
+.laporan-filter-field select,
+.laporan-filter-field input {
+  width: 100%;
+  height: 42px;
+  padding: 0 12px;
+  border-radius: var(--radius-md);
+  border: 1.5px solid var(--border);
+  background: var(--surface);
+  font-size: 13px;
+  font-family: var(--font-body);
+  color: var(--text);
+}
+
+.laporan-filter-field select:focus,
+.laporan-filter-field input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px var(--primary-tint);
+}
+
+.laporan-picker-btn {
+  width: 100%;
+  height: 42px;
+  padding: 0 12px;
+  border-radius: var(--radius-md);
+  border: 1.5px solid var(--border);
+  background: var(--surface);
+  font-size: 13px;
+  font-family: var(--font-body);
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+}
+
+.laporan-year-stepper {
+  display: flex;
+  align-items: center;
+  height: 42px;
+  border-radius: var(--radius-md);
+  border: 1.5px solid var(--border);
+  background: var(--surface);
+  overflow: hidden;
+}
+
+.laporan-year-stepper button {
+  width: 38px;
+  height: 100%;
+  border: none;
+  background: var(--bg);
+  color: var(--primary);
+  font-size: 18px;
+  font-weight: 700;
+  font-family: var(--font-body);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.laporan-year-stepper span {
+  flex: 1;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.laporan-bulan-sheet {
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+.laporan-bulan-sheet .action-sheet-item.active {
+  color: var(--primary);
+  font-weight: 700;
+}
+
+/* ---- Table ---- */
+.laporan-table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  -webkit-overflow-scrolling: touch;
+}
+
+.laporan-table-wrap[hidden] {
+  display: none;
+}
+
+.laporan-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12.5px;
+  white-space: nowrap;
+}
+
+.laporan-table thead th {
+  position: sticky;
+  top: 0;
+  background: var(--bg);
+  color: var(--muted);
+  font-weight: 600;
+  text-align: left;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.laporan-table tbody td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+}
+
+.laporan-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.laporan-table th:not(:first-child),
+.laporan-table td:not(:first-child) {
+  text-align: right;
+}
+
+.laporan-table td.positive { color: var(--success); font-weight: 600; }
+.laporan-table td.negative { color: var(--error); font-weight: 600; }

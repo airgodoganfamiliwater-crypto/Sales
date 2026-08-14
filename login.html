@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Masuk — Sales Tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="login.css">
+</head>
+<body>
+
+  <!-- Custom alert / toast container -->
+  <div id="alertContainer" class="alert-container" aria-live="polite"></div>
+
+  <div class="screen">
+    <div class="brand-panel">
+      <div class="brand-mark">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 21C12 21 19 15.5 19 10C19 6.13401 15.866 3 12 3C8.13401 3 5 6.13401 5 10C5 15.5 12 21 12 21Z" stroke="white" stroke-width="1.8" stroke-linejoin="round"/>
+          <circle cx="12" cy="10" r="2.6" stroke="white" stroke-width="1.8"/>
+        </svg>
+      </div>
+      <p class="brand-eyebrow">Pendataan Lapangan</p>
+      <h1 class="brand-title">Sales<br>Tracker</h1>
+      <p class="brand-sub">Catat kunjungan, transaksi, dan pelanggan langsung dari lapangan — tersinkron seketika.</p>
+
+      <div class="route-line" aria-hidden="true">
+        <span class="dot filled"></span>
+        <span class="seg"></span>
+        <span class="dot filled"></span>
+        <span class="seg"></span>
+        <span class="dot"></span>
+      </div>
+    </div>
+
+    <div class="form-panel">
+      <div class="form-wrap">
+        <h2 class="form-title">Masuk ke akun kamu</h2>
+        <p class="form-desc">Gunakan email &amp; kata sandi yang terdaftar dari admin.</p>
+
+        <form id="loginForm" novalidate>
+          <div class="field">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" placeholder="nama@perusahaan.com" autocomplete="username" required>
+          </div>
+
+          <div class="field">
+            <label for="password">Kata sandi</label>
+            <div class="password-wrap">
+              <input type="password" id="password" name="password" placeholder="••••••••" autocomplete="current-password" required>
+              <button type="button" class="toggle-pass" id="togglePass" aria-label="Tampilkan kata sandi">
+                <svg id="eyeIcon" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+                  <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.6"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <button type="submit" class="btn-submit" id="submitBtn">
+            <span class="btn-label">Masuk</span>
+            <span class="btn-spinner" aria-hidden="true"></span>
+          </button>
+        </form>
+
+        <p class="form-footnote">Lupa kata sandi? Hubungi admin tim kamu.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Firebase SDK (compat) -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="login.js"></script>
+</body>
+</html>

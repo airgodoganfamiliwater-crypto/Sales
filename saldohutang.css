@@ -1,0 +1,55 @@
+/* ===== Saldo & Hutang view ===== */
+
+.sh-kpi-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.sh-kpi-row .kpi-card {
+  flex: none;
+}
+
+.sh-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+  background: var(--bg);
+  border-radius: var(--radius-md);
+  padding: 4px;
+}
+
+.sh-tab {
+  flex: 1;
+  border: none;
+  background: transparent;
+  padding: 10px 0;
+  border-radius: 10px;
+  font-size: 13.5px;
+  font-weight: 600;
+  font-family: var(--font-body);
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.sh-tab.active {
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: 0 1px 4px rgba(15, 23, 42, 0.08);
+}
+
+.sh-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.sh-amount {
+  flex-shrink: 0;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.sh-amount.hutang { color: var(--error); }
+.sh-amount.saldo { color: var(--success); }

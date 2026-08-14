@@ -1,0 +1,208 @@
+/* ===== Input view ===== */
+
+.input-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.input-form .field {
+  margin-bottom: 16px;
+  position: relative;
+}
+
+.input-form .field label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 7px;
+}
+
+.input-form .field input[type="text"],
+.input-form .field input[type="number"] {
+  width: 100%;
+  padding: 13px 15px;
+  border-radius: var(--radius-md);
+  border: 1.5px solid var(--border);
+  font-size: 14.5px;
+  font-family: var(--font-body);
+  color: var(--text);
+  background: var(--surface);
+}
+
+.input-form .field input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px var(--primary-tint);
+}
+
+/* ---- Autocomplete suggestions ---- */
+.autocomplete-list {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin-top: 6px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.1);
+  max-height: 220px;
+  overflow-y: auto;
+  z-index: 15;
+}
+
+.autocomplete-list[hidden] {
+  display: none;
+}
+
+.autocomplete-item {
+  padding: 12px 15px;
+  font-size: 14px;
+  color: var(--text);
+  cursor: pointer;
+  border-bottom: 1px solid var(--border);
+}
+
+.autocomplete-item:last-child { border-bottom: none; }
+.autocomplete-item:hover,
+.autocomplete-item:active { background: var(--bg); }
+
+.autocomplete-empty {
+  padding: 12px 15px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+/* ---- Customer info card ---- */
+.customer-info-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  margin-bottom: 16px;
+}
+
+.customer-info-card[hidden] {
+  display: none;
+}
+
+.today-entry-badge {
+  background: var(--primary-tint);
+  color: var(--primary-dark);
+  border-radius: var(--radius-md);
+  padding: 10px 14px;
+  font-size: 12.5px;
+  font-weight: 600;
+  line-height: 1.5;
+  margin-bottom: 16px;
+}
+
+.today-entry-badge[hidden] {
+  display: none;
+}
+
+.info-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 13px;
+}
+
+.info-row span { color: var(--muted); }
+.info-row strong { color: var(--text); font-weight: 600; }
+
+/* ---- Calculated read-only rows ---- */
+.calc-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 13px 15px;
+  border-radius: var(--radius-md);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  margin-bottom: 16px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.calc-row span { font-weight: 500; color: var(--muted); font-size: 13px; }
+
+.calc-row-highlight {
+  background: var(--primary-tint);
+  border-color: var(--primary-tint);
+}
+
+.calc-row-highlight strong { color: var(--primary-dark); }
+
+.calc-row-highlight.negative {
+  background: var(--error-tint);
+  border-color: var(--error-tint);
+}
+
+.calc-row-highlight.negative strong { color: var(--error); }
+
+/* ---- Saldo toggle ---- */
+.toggle-field {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: var(--radius-md);
+  border: 1.5px solid var(--border);
+  margin-bottom: 16px;
+  font-size: 13.5px;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.toggle-field[hidden] {
+  display: none;
+}
+
+.toggle-field input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--primary);
+}
+
+/* ---- Submit button (standalone, not inside a sheet) ---- */
+.input-form .btn-submit {
+  width: 100%;
+  padding: 15px 16px;
+  border: none;
+  border-radius: var(--radius-md);
+  background: var(--primary);
+  color: white;
+  font-family: var(--font-body);
+  font-size: 15.5px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.input-form .btn-submit:hover { background: var(--primary-dark); }
+.input-form .btn-submit:disabled { opacity: 0.75; cursor: not-allowed; }
+
+.input-form .btn-spinner {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 2.5px solid rgba(255, 255, 255, 0.4);
+  border-top-color: white;
+  display: none;
+  animation: input-spin 0.7s linear infinite;
+}
+
+.input-form .btn-submit.loading .btn-spinner { display: inline-block; }
+
+@keyframes input-spin {
+  to { transform: rotate(360deg); }
+}

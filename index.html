@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<script>
+  (function () {
+    try {
+      if (localStorage.getItem('theme') === 'dark') {
+        document.documentElement.classList.add('dark');
+      }
+    } catch (e) {}
+  })();
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Sales Tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
+
+<!-- Global -->
+<link rel="stylesheet" href="index.css">
+<!-- Per-view styles -->
+<link rel="stylesheet" href="home.css">
+<link rel="stylesheet" href="input.css">
+<link rel="stylesheet" href="customer.css">
+<link rel="stylesheet" href="riwayat.css">
+<link rel="stylesheet" href="saldohutang.css">
+<link rel="stylesheet" href="profile.css">
+<link rel="stylesheet" href="laporan.css">
+</head>
+<body>
+
+  <!-- Custom alert / toast container -->
+  <div id="alertContainer" class="alert-container" aria-live="polite"></div>
+
+  <div class="app-shell">
+
+    <!-- Topbar -->
+    <header class="topbar topbar-hidden">
+      <button class="back-btn" id="topbarBackBtn" aria-label="Kembali" hidden>
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      <div class="topbar-title">
+        <span class="topbar-eyebrow" id="topbarEyebrow">Pendataan Lapangan</span>
+        <h1 id="topbarTitle">Home</h1>
+      </div>
+      <button class="logout-btn" id="topbarProfileBtn" data-nav="profile" aria-label="Profil">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M20 21a8 8 0 1 0-16 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          <circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="1.8"/>
+        </svg>
+      </button>
+    </header>
+
+    <!-- Views -->
+    <main class="view-container no-topbar" id="viewContainer">
+
+      <section id="view-home" class="view active">
+        <div class="home-hero">
+          <div class="home-hero-top">
+            <div class="home-hero-profile">
+              <div class="home-hero-avatar-chip" id="homeAvatarChip" data-nav="profile">
+                <span id="homeAvatarInitial">S</span>
+                <img id="homeAvatarImg" alt="" hidden>
+              </div>
+              <div>
+                <p class="home-hero-eyebrow" id="homeGreeting">Selamat datang</p>
+                <h2 class="home-hero-name skeleton skeleton-light" id="homeUserName">Sales</h2>
+              </div>
+            </div>
+            <button class="home-hero-bell" id="homeBellBtn" data-nav="saldohutang" aria-label="Saldo & Hutang">
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M13.73 21a2 2 0 0 1-3.46 0" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
+              </svg>
+              <span class="home-hero-bell-dot" id="homeBellDot" hidden></span>
+            </button>
+          </div>
+
+          <div class="home-hero-balance">
+            <div class="home-hero-balance-label">
+              <span>Pembayaran hari ini</span>
+              <button type="button" class="home-eye-toggle" id="homeEyeToggle" aria-label="Sembunyikan/tampilkan nominal">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" id="homeEyeIcon">
+                  <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z" stroke="white" stroke-width="1.7" stroke-linejoin="round"/>
+                  <circle cx="12" cy="12" r="3" stroke="white" stroke-width="1.7"/>
+                </svg>
+              </button>
+            </div>
+            <p class="home-hero-balance-value skeleton skeleton-light" id="homeBalanceValue">Rp 0</p>
+          </div>
+
+          <div class="home-hero-actions">
+            <button class="home-hero-btn home-hero-btn-primary" data-nav="input">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+              </svg>
+              Catat Kunjungan
+            </button>
+            <button class="home-hero-btn" data-nav="customer">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                <circle cx="9" cy="7" r="4" stroke="currentColor" stroke-width="1.8"/>
+              </svg>
+              Data Pelanggan
+            </button>
+          </div>
+        </div>
+
+        <div class="stat-row">
+          <div class="stat-card">
+            <div class="stat-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 21s7-5.5 7-11a7 7 0 1 0-14 0c0 5.5 7 11 7 11Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+                <circle cx="12" cy="10" r="2.4" stroke="currentColor" stroke-width="1.8"/>
+              </svg>
+            </div>
+            <span class="stat-value skeleton" id="statVisits">0</span>
+            <span class="stat-label">Kunjungan hari ini</span>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M3 10h18M7 15h4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                <rect x="3" y="5" width="18" height="14" rx="2.5" stroke="currentColor" stroke-width="1.8"/>
+              </svg>
+            </div>
+            <span class="stat-value skeleton" id="statTransactions">0</span>
+            <span class="stat-label">Transaksi hari ini</span>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                <circle cx="9" cy="7" r="4" stroke="currentColor" stroke-width="1.8"/>
+              </svg>
+            </div>
+            <span class="stat-value skeleton" id="statCustomers">0</span>
+            <span class="stat-label">Total pelanggan</span>
+          </div>
+        </div>
+
+        <div class="section-block">
+          <h3 class="section-title">Aksi cepat</h3>
+          <div class="quick-actions">
+            <button class="qa-btn qa-primary" data-nav="saldohutang">
+              <span class="qa-icon">
+                <svg width="19" height="19" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </span>
+              <span class="qa-text">
+                <strong>Saldo &amp; Hutang</strong>
+                <small>Lihat customer dengan saldo/hutang</small>
+              </span>
+              <svg class="qa-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+
+            <button class="qa-btn" data-nav="laporan">
+              <span class="qa-icon qa-icon-muted">
+                <svg width="19" height="19" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M9 17V9m4 8V5m4 12v-6M5 21h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </span>
+              <span class="qa-text">
+                <strong>Laporan</strong>
+                <small>Riwayat perbulan &amp; rentang tanggal</small>
+              </span>
+              <svg class="qa-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="section-block">
+          <div class="section-title-row">
+            <h3 class="section-title">Aktivitas terbaru</h3>
+            <button class="section-link" data-nav="riwayat">Lihat semua</button>
+          </div>
+          <div id="homeActivityList">
+            <div class="riwayat-entry">
+              <div class="riwayat-entry-main">
+                <p class="riwayat-entry-name skeleton skeleton-text-md">&nbsp;</p>
+                <p class="riwayat-entry-meta skeleton skeleton-text-lg">&nbsp;</p>
+              </div>
+              <span class="riwayat-entry-keterangan skeleton skeleton-text-sm">&nbsp;</span>
+            </div>
+            <div class="riwayat-entry">
+              <div class="riwayat-entry-main">
+                <p class="riwayat-entry-name skeleton skeleton-text-md">&nbsp;</p>
+                <p class="riwayat-entry-meta skeleton skeleton-text-lg">&nbsp;</p>
+              </div>
+              <span class="riwayat-entry-keterangan skeleton skeleton-text-sm">&nbsp;</span>
+            </div>
+            <div class="riwayat-entry">
+              <div class="riwayat-entry-main">
+                <p class="riwayat-entry-name skeleton skeleton-text-md">&nbsp;</p>
+                <p class="riwayat-entry-meta skeleton skeleton-text-lg">&nbsp;</p>
+              </div>
+              <span class="riwayat-entry-keterangan skeleton skeleton-text-sm">&nbsp;</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="view-input" class="view">
+        <form id="inputForm" class="input-form">
+
+          <div class="field autocomplete-field">
+            <label for="inputNama">Nama pelanggan</label>
+            <input type="text" id="inputNama" placeholder="Ketik nama pelanggan..." autocomplete="off" required>
+            <div class="autocomplete-list" id="inputNamaSuggestions" hidden></div>
+          </div>
+
+          <div class="customer-info-card" id="customerInfoCard" hidden>
+            <div class="info-row">
+              <span>Harga / galon</span>
+              <strong id="infoHarga">-</strong>
+            </div>
+            <div class="info-row">
+              <span>Saldo</span>
+              <strong id="infoSaldo">-</strong>
+            </div>
+            <div class="info-row">
+              <span>Hutang</span>
+              <strong id="infoHutang">-</strong>
+            </div>
+          </div>
+
+          <div class="today-entry-badge" id="todayEntryBadge" hidden>
+            Sudah ada input untuk hari ini — data ini akan diperbarui.
+          </div>
+
+          <div class="field">
+            <label for="inputGalon">Pengisian galon</label>
+            <input type="number" id="inputGalon" placeholder="0" min="0" inputmode="numeric" required>
+          </div>
+
+          <div class="calc-row">
+            <span>Tagihan</span>
+            <strong id="calcTagihan">Rp 0</strong>
+          </div>
+
+          <div class="field">
+            <label for="inputPembayaran">Pembayaran</label>
+            <input type="number" id="inputPembayaran" placeholder="0" min="0" inputmode="numeric" required>
+          </div>
+
+          <label class="toggle-field" id="saldoToggleField" hidden>
+            <input type="checkbox" id="useSaldoToggle">
+            <span>Gunakan saldo (<span id="saldoToggleAmount">Rp 0</span>)</span>
+          </label>
+
+          <div class="calc-row calc-row-highlight" id="calcKeteranganRow">
+            <span>Keterangan</span>
+            <strong id="calcKeterangan">Rp 0</strong>
+          </div>
+
+          <button type="submit" class="btn-submit" id="inputSubmitBtn">
+            <span class="btn-label">Simpan</span>
+            <span class="btn-spinner" aria-hidden="true"></span>
+          </button>
+        </form>
+      </section>
+
+      <section id="view-customer" class="view">
+        <div class="customer-toolbar" id="customerToolbar">
+          <div class="search-box">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.8"/>
+              <path d="M21 21l-4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+            </svg>
+            <input type="text" id="customerSearch" placeholder="Cari nama atau telepon...">
+          </div>
+          <button class="add-btn" id="addCustomerBtn" aria-label="Tambah pelanggan">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 5v14M5 12h14" stroke="white" stroke-width="2.2" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </div>
+
+        <div class="selection-bar" id="selectionBar" hidden>
+          <button type="button" class="selection-cancel" id="selectionCancelBtn" aria-label="Batal">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M18 6 6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </button>
+          <span class="selection-count" id="selectionCount">0 dipilih</span>
+          <button type="button" class="selection-delete" id="selectionDeleteBtn">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M4 7h16M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2m-8 0 1 12a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1l1-12" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <span>Hapus</span>
+          </button>
+        </div>
+
+        <div id="customerList" class="customer-list">
+          <div class="empty-state" id="customerEmptyState">
+            <div class="empty-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                <circle cx="9" cy="7" r="4" stroke="currentColor" stroke-width="1.8"/>
+              </svg>
+            </div>
+            <p class="empty-title">Belum ada pelanggan</p>
+            <p class="empty-desc">Tambahkan pelanggan pertama kamu lewat tombol + di atas.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="view-riwayat" class="view">
+        <div class="riwayat-kpi-row" id="riwayatKpiRow">
+          <div class="kpi-card">
+            <span class="kpi-label">Customer</span>
+            <span class="kpi-value" id="kpiCustomerCount">0</span>
+          </div>
+          <div class="kpi-card">
+            <span class="kpi-label">Pengisian galon</span>
+            <span class="kpi-value" id="kpiGalon">0</span>
+          </div>
+          <div class="kpi-card">
+            <span class="kpi-label">Pembayaran</span>
+            <span class="kpi-value" id="kpiPembayaran">Rp 0</span>
+          </div>
+          <div class="kpi-card kpi-negative">
+            <span class="kpi-label">Hutang</span>
+            <span class="kpi-value" id="kpiHutang">Rp 0</span>
+          </div>
+          <div class="kpi-card kpi-positive">
+            <span class="kpi-label">Saldo</span>
+            <span class="kpi-value" id="kpiSaldo">Rp 0</span>
+          </div>
+        </div>
+
+        <div class="riwayat-toolbar">
+          <div class="search-box">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.8"/>
+              <path d="M21 21l-4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+            </svg>
+            <input type="text" id="riwayatSearch" placeholder="Cari nama pelanggan...">
+          </div>
+          <input type="date" id="riwayatDateFilter" class="date-filter-input">
+        </div>
+
+        <div id="riwayatList" class="riwayat-list">
+          <div class="empty-state">
+            <div class="empty-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M3 3v5h5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M3.05 13a9 9 0 1 0 2.13-6.36L3 8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                <path d="M12 7v5l3 3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <p class="empty-title">Belum ada riwayat</p>
+            <p class="empty-desc">Data kunjungan &amp; transaksi yang kamu input akan muncul di sini.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="view-saldohutang" class="view">
+        <div class="sh-kpi-row">
+          <div class="kpi-card kpi-negative">
+            <span class="kpi-label">Total Hutang</span>
+            <span class="kpi-value" id="shKpiHutang">Rp 0</span>
+          </div>
+          <div class="kpi-card kpi-positive">
+            <span class="kpi-label">Total Saldo</span>
+            <span class="kpi-value" id="shKpiSaldo">Rp 0</span>
+          </div>
+        </div>
+
+        <div class="sh-tabs">
+          <button type="button" class="sh-tab active" id="shTabHutang" data-sh-tab="hutang">Hutang</button>
+          <button type="button" class="sh-tab" id="shTabSaldo" data-sh-tab="saldo">Saldo</button>
+        </div>
+
+        <div id="shList" class="sh-list">
+          <div class="empty-state">
+            <div class="empty-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                <circle cx="9" cy="7" r="4" stroke="currentColor" stroke-width="1.8"/>
+              </svg>
+            </div>
+            <p class="empty-title">Belum ada data</p>
+            <p class="empty-desc">Customer dengan hutang akan muncul di sini.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="view-profile" class="view">
+        <button type="button" class="profile-back-btn" data-nav="home">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          Kembali
+        </button>
+
+        <div class="profile-photo-wrap">
+          <button type="button" class="profile-photo-btn" id="profilePhotoBtn" aria-label="Ubah foto profil">
+            <div class="profile-photo-empty" id="profilePhotoEmpty">
+              <svg width="34" height="34" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M20 21a8 8 0 1 0-16 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                <circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="1.8"/>
+              </svg>
+            </div>
+            <img id="profilePhotoImg" class="profile-photo-img" alt="Foto profil" hidden>
+            <span class="profile-photo-edit-badge">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5Z" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </span>
+          </button>
+        </div>
+
+        <div class="profile-info-card">
+          <div class="profile-info-row">
+            <span>Nama</span>
+            <strong id="profileName">-</strong>
+          </div>
+          <div class="profile-info-row">
+            <span>Email</span>
+            <strong id="profileEmail">-</strong>
+          </div>
+          <div class="profile-info-row">
+            <span>Role</span>
+            <strong id="profileRole">-</strong>
+          </div>
+          <div class="profile-info-row">
+            <span>Status</span>
+            <strong id="profileStatus">-</strong>
+          </div>
+        </div>
+
+        <div class="profile-section">
+          <h3 class="section-title">Tampilan</h3>
+          <div class="profile-toggle-row">
+            <div>
+              <p class="profile-toggle-title">Mode Gelap</p>
+              <p class="profile-toggle-desc">Ubah tampilan aplikasi jadi gelap</p>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="darkModeToggle">
+              <span class="switch-track"></span>
+            </label>
+          </div>
+        </div>
+
+        <button type="button" class="profile-logout-btn" id="profileLogoutBtn">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M15 17l5-5-5-5M20 12H9M13 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          Keluar
+        </button>
+      </section>
+
+      <section id="view-laporan" class="view">
+        <div class="riwayat-kpi-row">
+          <div class="kpi-card">
+            <span class="kpi-label">Jumlah Hari</span>
+            <span class="kpi-value" id="laporanKpiHari">0</span>
+          </div>
+          <div class="kpi-card">
+            <span class="kpi-label">Jumlah Customer</span>
+            <span class="kpi-value" id="laporanKpiCustomer">0</span>
+          </div>
+          <div class="kpi-card">
+            <span class="kpi-label">Closing</span>
+            <span class="kpi-value" id="laporanKpiClosing">0 galon</span>
+          </div>
+          <div class="kpi-card">
+            <span class="kpi-label">Pembayaran</span>
+            <span class="kpi-value" id="laporanKpiPembayaran">Rp 0</span>
+          </div>
+          <div class="kpi-card">
+            <span class="kpi-label">Keterangan</span>
+            <span class="kpi-value" id="laporanKpiKeterangan">Rp 0</span>
+          </div>
+        </div>
+
+        <div class="sh-tabs">
+          <button type="button" class="sh-tab active" id="laporanTabBulan">Per Bulan</button>
+          <button type="button" class="sh-tab" id="laporanTabRange">Rentang Tanggal</button>
+        </div>
+
+        <div class="laporan-filter-panel" id="laporanBulanFilter">
+          <div class="laporan-filter-field">
+            <label for="laporanBulanBtn">Bulan</label>
+            <button type="button" class="laporan-picker-btn" id="laporanBulanBtn">
+              <span id="laporanBulanBtnLabel">Januari</span>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+          </div>
+          <div class="laporan-filter-field">
+            <label>Tahun</label>
+            <div class="laporan-year-stepper">
+              <button type="button" id="laporanYearMinus" aria-label="Tahun sebelumnya">−</button>
+              <span id="laporanYearValue">2026</span>
+              <button type="button" id="laporanYearPlus" aria-label="Tahun berikutnya">+</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="laporan-filter-panel" id="laporanRangeFilter" hidden>
+          <div class="laporan-filter-field">
+            <label for="laporanDateFrom">Dari</label>
+            <input type="date" id="laporanDateFrom">
+          </div>
+          <div class="laporan-filter-field">
+            <label for="laporanDateTo">Sampai</label>
+            <input type="date" id="laporanDateTo">
+          </div>
+        </div>
+
+        <div class="laporan-table-wrap" id="laporanTableWrap">
+          <table class="laporan-table">
+            <thead>
+              <tr>
+                <th>Tanggal</th>
+                <th>Customer</th>
+                <th>Closing</th>
+                <th>Pembayaran</th>
+                <th>Keterangan</th>
+              </tr>
+            </thead>
+            <tbody id="laporanTableBody"></tbody>
+          </table>
+        </div>
+
+        <div class="empty-state" id="laporanEmptyState" hidden>
+          <div class="empty-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M9 17V9m4 8V5m4 12v-6M5 21h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <p class="empty-title">Belum ada data</p>
+          <p class="empty-desc">Gak ada data untuk periode ini.</p>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Floating input button -->
+    <button class="fab-input" id="fabInput" data-view="input" aria-label="Tambah data">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 5v14M5 12h14" stroke="white" stroke-width="2.3" stroke-linecap="round"/>
+      </svg>
+      <span>Input</span>
+    </button>
+
+    <!-- Bottom nav -->
+    <nav class="bottom-nav">
+      <button class="nav-item" data-view="home" aria-label="Home">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M3 10.5 12 3l9 7.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M5 9.5V20a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V9.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span>Home</span>
+      </button>
+
+      <button class="nav-item" data-view="customer" aria-label="Customer">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          <circle cx="9" cy="7" r="4" stroke="currentColor" stroke-width="1.8"/>
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+        <span>Customer</span>
+      </button>
+
+      <button class="nav-item" data-view="riwayat" aria-label="Riwayat">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M3.05 13a9 9 0 1 0 2.13-6.36L3 8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          <path d="M12 7v5l3 3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span>Riwayat</span>
+      </button>
+    </nav>
+
+  </div>
+
+  <!-- Add customer bottom sheet -->
+  <div class="sheet-overlay" id="customerSheetOverlay">
+    <div class="sheet">
+      <div class="sheet-handle"></div>
+      <div class="sheet-header">
+        <h3 class="sheet-title" id="customerSheetTitle">Tambah Pelanggan</h3>
+        <button type="button" class="sheet-close" id="customerSheetClose" aria-label="Tutup">×</button>
+      </div>
+      <form id="customerForm">
+        <div class="field">
+          <label for="custName">Nama pelanggan</label>
+          <input type="text" id="custName" placeholder="Nama toko / pelanggan" required>
+        </div>
+        <div class="field">
+          <label for="custPhone">No. telepon</label>
+          <input type="tel" id="custPhone" placeholder="08xxxxxxxxxx">
+        </div>
+        <div class="field">
+          <label for="custAddress">Alamat</label>
+          <input type="text" id="custAddress" placeholder="Alamat lengkap">
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label for="custGalon">Jumlah galon</label>
+            <input type="number" id="custGalon" placeholder="0" min="0" inputmode="numeric" required>
+          </div>
+          <div class="field">
+            <label for="custHarga">Harga per galon</label>
+            <input type="number" id="custHarga" value="8000" min="0" inputmode="numeric" required>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Lokasi pelanggan</label>
+          <button type="button" class="location-btn" id="pickLocationBtn">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 21s7-5.5 7-11a7 7 0 1 0-14 0c0 5.5 7 11 7 11Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+              <circle cx="12" cy="10" r="2.4" stroke="currentColor" stroke-width="1.8"/>
+            </svg>
+            <span id="locationBtnLabel">Ambil lokasi</span>
+          </button>
+          <div class="location-map-card no-sheet-drag" id="locationMapCard" hidden>
+            <div id="locationMap"></div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Foto pelanggan</label>
+          <div class="photo-card" id="photoCard">
+            <div class="photo-card-empty" id="photoCardEmpty">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M4 8a2 2 0 0 1 2-2h1.2a2 2 0 0 0 1.66-.89l.28-.42A2 2 0 0 1 10.8 4h2.4a2 2 0 0 1 1.66.89l.28.42A2 2 0 0 0 16.8 6H18a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+                <circle cx="12" cy="13" r="3.2" stroke="currentColor" stroke-width="1.8"/>
+              </svg>
+              <span>Tap untuk ambil foto</span>
+            </div>
+            <img id="photoCardPreview" class="photo-card-preview" alt="Preview foto pelanggan" hidden>
+          </div>
+          <input type="file" id="photoInputCamera" accept="image/*" capture="environment" hidden>
+          <input type="file" id="photoInputGallery" accept="image/*" hidden>
+        </div>
+
+        <button type="submit" class="btn-submit" id="custSubmitBtn">
+          <span class="btn-label">Simpan Pelanggan</span>
+          <span class="btn-spinner" aria-hidden="true"></span>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Photo source action sheet -->
+  <div class="sheet-overlay" id="photoSheetOverlay">
+    <div class="sheet action-sheet">
+      <div class="sheet-handle"></div>
+      <button type="button" class="action-sheet-item" id="photoTakeBtn">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M4 8a2 2 0 0 1 2-2h1.2a2 2 0 0 0 1.66-.89l.28-.42A2 2 0 0 1 10.8 4h2.4a2 2 0 0 1 1.66.89l.28.42A2 2 0 0 0 16.8 6H18a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+          <circle cx="12" cy="13" r="3.2" stroke="currentColor" stroke-width="1.8"/>
+        </svg>
+        <span>Ambil dari Kamera</span>
+      </button>
+      <button type="button" class="action-sheet-item" id="photoGalleryBtn">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="3" y="4" width="18" height="16" rx="2.5" stroke="currentColor" stroke-width="1.8"/>
+          <path d="m3 16 5-5 4 4 3-3 6 6" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+          <circle cx="8" cy="9" r="1.6" stroke="currentColor" stroke-width="1.8"/>
+        </svg>
+        <span>Pilih dari Galeri</span>
+      </button>
+      <button type="button" class="action-sheet-item action-sheet-cancel" id="photoCancelBtn">Batal</button>
+    </div>
+  </div>
+
+  <!-- Delete confirmation dialog -->
+  <div class="confirm-overlay" id="deleteConfirmOverlay">
+    <div class="confirm-dialog">
+      <h3 class="confirm-title">Hapus pelanggan?</h3>
+      <p class="confirm-desc" id="deleteConfirmDesc">Data yang dipilih akan dihapus permanen dan tidak bisa dikembalikan.</p>
+      <div class="confirm-actions">
+        <button type="button" class="confirm-btn confirm-cancel" id="deleteConfirmCancel">Batal</button>
+        <button type="button" class="confirm-btn confirm-danger" id="deleteConfirmOk">Hapus</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Profile photo source action sheet -->
+  <div class="sheet-overlay" id="profilePhotoSheetOverlay">
+    <div class="sheet action-sheet">
+      <div class="sheet-handle"></div>
+      <button type="button" class="action-sheet-item" id="profilePhotoChangeBtn">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="3" y="4" width="18" height="16" rx="2.5" stroke="currentColor" stroke-width="1.8"/>
+          <path d="m3 16 5-5 4 4 3-3 6 6" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+          <circle cx="8" cy="9" r="1.6" stroke="currentColor" stroke-width="1.8"/>
+        </svg>
+        <span>Ganti Foto</span>
+      </button>
+      <button type="button" class="action-sheet-item" id="profilePhotoDeleteBtn" style="color: var(--error);">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M4 7h16M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2m-8 0 1 12a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1l1-12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span>Hapus Foto</span>
+      </button>
+      <button type="button" class="action-sheet-item action-sheet-cancel" id="profilePhotoCancelBtn">Batal</button>
+    </div>
+  </div>
+
+  <input type="file" id="profilePhotoFileInput" accept="image/*" hidden>
+
+  <!-- Photo crop tool -->
+  <div class="crop-overlay" id="profileCropOverlay">
+    <div class="crop-header">
+      <button type="button" class="crop-cancel" id="cropCancelBtn">Batal</button>
+      <h3 class="crop-title">Sesuaikan Foto</h3>
+      <button type="button" class="crop-save" id="cropSaveBtn">Simpan</button>
+    </div>
+    <div class="crop-stage-wrap">
+      <div class="crop-stage" id="cropStage">
+        <img id="cropImage" class="crop-image" alt="">
+      </div>
+    </div>
+    <div class="crop-controls">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.8"/>
+      </svg>
+      <input type="range" id="cropZoomSlider" min="100" max="300" value="100">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="11" cy="11" r="9" stroke="currentColor" stroke-width="1.8"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- Logout confirmation dialog -->
+  <div class="confirm-overlay" id="logoutConfirmOverlay">
+    <div class="confirm-dialog">
+      <h3 class="confirm-title">Keluar dari akun?</h3>
+      <p class="confirm-desc">Kamu perlu masuk lagi buat lanjut pakai aplikasi ini.</p>
+      <div class="confirm-actions">
+        <button type="button" class="confirm-btn confirm-cancel" id="logoutConfirmCancel">Batal</button>
+        <button type="button" class="confirm-btn confirm-danger" id="logoutConfirmOk">Keluar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bulan picker sheet -->
+  <div class="sheet-overlay" id="laporanBulanSheetOverlay">
+    <div class="sheet action-sheet laporan-bulan-sheet">
+      <div class="sheet-handle"></div>
+      <div id="laporanBulanList"></div>
+    </div>
+  </div>
+
+  <!-- Firebase SDK (compat) -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+
+  <!-- Global shell + router -->
+  <script src="index.js"></script>
+
+  <!-- Per-view scripts -->
+  <script src="home.js"></script>
+  <script src="input.js"></script>
+  <script src="customer.js"></script>
+  <script src="riwayat.js"></script>
+  <script src="saldohutang.js"></script>
+  <script src="profile.js"></script>
+  <script src="laporan.js"></script>
+   
+  <div id="devConsoleMount"></div>
+  <script src="devconsole.js"></script>
+  
+</body>
+</html>
